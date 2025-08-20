@@ -7,3 +7,21 @@ class Blog(BaseModel):
 
     class Config:
         orm_mode = True
+
+class ShowBlog(Blog):
+
+    pass
+
+
+class User(BaseModel):
+    name: str
+    email: str
+    password: str
+
+    # class Config:
+    #     orm_mode = True
+
+
+class ShowUser(BaseModel):
+    name: str
+    email: str
