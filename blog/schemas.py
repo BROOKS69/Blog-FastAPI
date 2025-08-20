@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 
 class Blog(BaseModel):
@@ -8,9 +9,6 @@ class Blog(BaseModel):
     class Config:
         orm_mode = True
 
-class ShowBlog(Blog):
-
-    pass
 
 
 class User(BaseModel):
@@ -18,10 +16,22 @@ class User(BaseModel):
     email: str
     password: str
 
-    # class Config:
-    #     orm_mode = True
+class Config:
+    orm_mode = True
 
 
 class ShowUser(BaseModel):
     name: str
     email: str
+    blogs: List
+    
+class Config:
+    orm_mode = True   
+
+class ShowBlog(Blog):
+    title: str
+    body: str
+    creator: ShowUser
+
+class Config:
+    orm_mode = True     
