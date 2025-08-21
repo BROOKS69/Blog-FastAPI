@@ -6,13 +6,14 @@ from .database import engine, get_db
 #from typing import List
 #from passlib.context import CryptContext
 #from .hashing import Hash
-from .routers import blog, user
+from .routers import blog, user, authentication
 
 models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+app.include_router(authentication.router)
 app.include_router(blog.router)   
 app.include_router(user.router) 
 
