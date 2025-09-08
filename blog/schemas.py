@@ -1,32 +1,32 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
-
+# Blog schema
 class Blog(BaseModel):
     title: str
     body: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-
+# User schema
 class User(BaseModel):
     name: str
     email: str
     password: str
 
 class Config:
-    orm_mode = True
+    from_attributes = True
 
-
+# Display user with blogs
 class ShowUser(BaseModel):
     name: str
     email: str
     blogs: List
     
 class Config:
-    orm_mode = True   
+    from_attributes = True   
 
 class ShowBlog(Blog):
     title: str
@@ -34,9 +34,9 @@ class ShowBlog(Blog):
     creator: ShowUser
 
 class Config:
-    orm_mode = True     
+    from_attributes = True     
 
-
+# Authentication
 class Login(BaseModel):
     username: str
     password: str

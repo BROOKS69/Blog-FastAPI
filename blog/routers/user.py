@@ -5,18 +5,20 @@ from passlib.context import CryptContext
 from ..hashing import Hash
 from ..repository import user
 
-
-router = APIRouter()
+# Initialize APIRouter
+router = APIRouter(
+    prefix="/user",
+)
 get_db = database.get_db
 
-
+# Additional code for user creation with password hashing
 pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-@router.post('/user', response_model=schemas.ShowUser, tags=["USERS"])
+@router.post('/', response_model=schemas.ShowUser, tags=["USERS"])
 def create_user(request: schemas.User,db: Session = Depends(get_db)):
-    return user.create_user(request, db)
+    return user.create(request, db)
 
-
-@router.get('/user/{id}', response_model=schemas.ShowUser, tags=["USERS"])
+# Get a user
+@router.get('/{id}', response_model=schemas.ShowUser, tags=["USERS"])
 def get_user(id: int, db: Session = Depends(get_db)):
    return user.show(id, db)                         

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from .. import schemas, database, models, JWTtoken
 from ..hashing import Hash
 
+# Initialize APIRouter
 router = APIRouter(
     tags=["AUTHENTICATION"],
 )
@@ -14,11 +15,11 @@ def login(request: schemas.Login, db:Session = Depends(database.get_db)):
     # Check if user exists
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                            detail="User not found")
+                            detail=f"User not found")
     # Verify password
     if not Hash.verify(user.password, request.password):  
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                            detail="Incorrect password")        
+                            detail=f"Incorrect password")        
 
                             # Generate JWT token and return response
     

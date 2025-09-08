@@ -6,13 +6,16 @@ from .database import engine, get_db
 #from typing import List
 #from passlib.context import CryptContext
 #from .hashing import Hash
-from .routers import blog, user, authentication
+from .routers import authentication, blog, user
 
+# Create the database tables
 models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
 
+# Initialize FastAPI app
 app = FastAPI()
 
+# Include routers for different functionalities
 app.include_router(authentication.router)
 app.include_router(blog.router)   
 app.include_router(user.router) 
@@ -91,4 +94,8 @@ app.include_router(user.router)
 #     if not user:
 #         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, 
 #                             detail = f"User with id {id} is not found")
-    # return user                            
+    # return user
+
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="127.0.0.1", port=8000)
