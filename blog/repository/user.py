@@ -4,7 +4,7 @@ from .. import schemas, models, database
 from passlib.context import CryptContext
 from ..hashing import Hash
 
-
+pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create(request: schemas.User, db: Session):
     hashed_password = pwd_cxt.hash(request.password)
@@ -19,4 +19,4 @@ def show(id: int, db: Session):
     if not user:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, 
                             detail = f"User with id {id} is not found")
-    return user         
+    return user
