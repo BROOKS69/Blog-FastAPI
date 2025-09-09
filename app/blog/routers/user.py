@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Response
 from sqlalchemy.orm import Session
-from .. import schemas, models, database
+from blog import schemas, models, database
 from passlib.context import CryptContext
-from ..hashing import Hash
-from ..repository import user
+from blog.hashing import Hash
+from blog.repository import user
 
 # Initialize APIRouter
 router = APIRouter(

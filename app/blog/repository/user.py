@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
-from .. import schemas, models, database
+from blog import schemas, models, database
 from passlib.context import CryptContext
-from ..hashing import Hash
+from blog.hashing import Hash
 
 
-
+# Initialize password context for hashing
 def create(request: schemas.User, db: Session):
     hashed_password = pwd_cxt.hash(request.password)
     new_user = models.User(name=request.name, email=request.email, password=hashed_password)
@@ -13,7 +13,8 @@ def create(request: schemas.User, db: Session):
     db.commit()
     db.refresh(new_user)
     return new_user
-
+    
+# Get a user
 def show(id: int, db: Session):
     user = db.query(models.User).filter(models.User.id == id).first()
     if not user:
