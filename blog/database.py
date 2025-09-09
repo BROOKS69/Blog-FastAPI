@@ -4,7 +4,8 @@ from sqlalchemy.orm import sessionmaker
 
 
 # SQLACHEMY_DATABASE_URL = 'postgresql://user:password@postgresserver/db'
-SQLACHEMY_DATABASE_URL = 'sqlite:///../blog.db'
+#SQLACHEMY_DATABASE_URL = 'sqlite:///../blog.db'
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://your_username:your_password@localhost:3306/your_dbname"
 
 engine = create_engine(
     SQLACHEMY_DATABASE_URL, connect_args={'check_same_thread': False}
