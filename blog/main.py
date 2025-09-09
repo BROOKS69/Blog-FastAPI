@@ -13,7 +13,8 @@ models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
 
 # Initialize FastAPI app
-app = FastAPI()
+#app = FastAPI()
+app = FastAPI(title="AUTHO BLOG-CRUD-API", version="1.0.0")
 
 # Include routers for different functionalities
 app.include_router(authentication.router)
