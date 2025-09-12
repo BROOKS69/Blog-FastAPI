@@ -1,16 +1,18 @@
-from fastapi import FastAPI, Depends
-#from fastapi import status, Response, HTTPException
-from blog import schemas, models, hashing
-from blog.database import engine, get_db
-#from sqlalchemy.orm import Session
-#from typing import List
-#from passlib.context import CryptContext
-#from .hashing import Hash
+import logging
+from fastapi import FastAPI
+from blog import models
+from blog.database import engine
 from blog.routers import authentication, blog, user
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Create the database tables
-models.Base.metadata.drop_all(bind=engine)
+# Warning: drop_all is unsafe for production, consider using Alembic migrations
+# models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
+logger.info("Database tables created or verified.")
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -18,7 +20,9 @@ app = FastAPI()
 # Include routers for different functionalities
 app.include_router(authentication.router)
 app.include_router(blog.router)   
-app.include_router(user.router) 
+app.include_router(user.router)
+logger.info("Routers included successfully.")
+
 
 
 

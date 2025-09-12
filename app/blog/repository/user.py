@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 from blog import schemas, models, database
-from passlib.context import CryptContext
 from blog.hashing import Hash
 
 
 # Initialize password context for hashing
 def create(request: schemas.User, db: Session):
-    hashed_password = pwd_cxt.hash(request.password)
+    hashed_password = Hash().bcrypt(request.password)
     new_user = models.User(name=request.name, email=request.email, password=hashed_password)
     db.add(new_user)
     db.commit()
