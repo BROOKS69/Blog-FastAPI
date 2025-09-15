@@ -19,16 +19,16 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@app.get('/')
-async def root():
-    return {"message": "Welcome to the Blog API"}
+
 
 app.include_router(authentication.router)
 app.include_router(blog.router)
 app.include_router(user.router)
 logger.info("Routers included successfully.")
 
-
+@app.get('/' , tags=["ROOT"])
+async def root():
+    return {"message": "Welcome to the Blog API"}
 
 
 # if __name__ == "__main__":
