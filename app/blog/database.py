@@ -1,21 +1,16 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base 
-from sqlalchemy.orm import sessionmaker
+from motor.motor_asyncio import AsyncIOMotorClient
+from beanie import init_beanie
 import os
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///../blog.db")
+MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017/blogdb")
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False} if "sqlite" in SQLALCHEMY_DATABASE_URL else {}
-)
+client = AsyncIOMotorClient(MONGODB_URL)
+database = client.get_database()
 
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-
-Base = declarative_base()
+async def init_db():
+    # Import models here to avoid circular imports
+    from . import models
+    await init_beanie(database=database, document_models=[models.User, models.Blog])
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    return database

@@ -1,27 +1,22 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from blog.database import Base
-from sqlalchemy.orm import relationship
+from beanie import Document, Link
+from pydantic import BaseModel, EmailStr, Field
+from typing import List, Optional
 
 
-class Blog(Base):
-    __tablename__ = 'blogs'
+class User(Document):
+    name: str
+    email: EmailStr
+    password: str
+    blogs: Optional[List[Link["Blog"]]] = []
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    body = Column(String)
-    user_id = Column(Integer, ForeignKey('user.id'))
-
-#relationship to link the blog to the user who created it
-    creator = relationship("User", back_populates="blogs")
+    class Settings:
+        name = "users"
 
 
-class User(Base):
-    __tablename__ = 'user'
+class Blog(Document):
+    title: str
+    body: str
+    creator: Link[User]
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
-
-#relationship to link the user to the blogs they created
-    blogs = relationship("Blog", back_populates="creator")
+    class Settings:
+        name = "blogs"

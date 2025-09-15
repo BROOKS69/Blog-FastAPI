@@ -1,25 +1,26 @@
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from blog import models
-from blog.database import engine
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from blog.database import init_db
 from blog.routers import authentication, blog, user
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create the database tables
-# Warning: drop_all is unsafe for production, consider using Alembic migrations
-# models.Base.metadata.drop_all(bind=engine)
-models.Base.metadata.create_all(bind=engine)
-logger.info("Database tables created or verified.")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    logger.info("Database initialized.")
+    yield
 
-# Initialize FastAPI app
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
-# Include routers for different functionalities
 app.include_router(authentication.router)
-app.include_router(blog.router)   
+app.include_router(blog.router)
 app.include_router(user.router)
 logger.info("Routers included successfully.")
 

@@ -1,7 +1,10 @@
 fastapi
 uvicorn
-sqlalchemy
+motor
+beanie
 passlib
 bcrypt
 python-jose
 python-multipart
+pytest
+httpx

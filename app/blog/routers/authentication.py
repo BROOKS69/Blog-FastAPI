@@ -1,26 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from blog import schemas, database, models, JWTtoken
+from fastapi import APIRouter, HTTPException, status
+from blog import schemas, models, JWTtoken
 from blog.hashing import Hash
 
-# Initialize APIRouter
 router = APIRouter(
     tags=["AUTHENTICATION"],
 )
 
-# Login endpoint
 @router.post('/login', response_model=schemas.Token)
-def login(request: schemas.Login, db: Session = Depends(database.get_db)):
-    user = db.query(models.User).filter(models.User.email == request.username).first()
-    # Check if user exists
+async def login(request: schemas.Login):
+    user = await models.User.find_one(models.User.email == request.username)
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid credentials")
-    # Verify password
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     if not Hash().verify(request.password, user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid credentials")
-
-    # Generate JWT token and return response
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     access_token = JWTtoken.create_access_token(data={"sub": user.email})
     return schemas.Token(access_token=access_token, token_type="bearer")

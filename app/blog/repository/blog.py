@@ -1,44 +1,39 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
-from sqlalchemy.orm import Session, joinedload
-from blog import schemas, models, database
+from fastapi import HTTPException, status, Response
+from blog import schemas, models
 
-# Initialize password context for hashing
-def get_all(db: Session):
-    blogs = db.query(models.Blog).options(joinedload(models.Blog.creator)).all()
+async def get_all():
+    blogs = await models.Blog.find_all().to_list()
+    for blog in blogs:
+        await blog.fetch_link(models.Blog.creator)
     return blogs
 
-# Additional code for blog operations
-def create(request: schemas.Blog, db: Session, user_id: int):
-    new_blog = models.Blog(title=request.title, body=request.body, user_id=user_id)
-    db.add(new_blog)
-    db.commit()
-    db.refresh(new_blog)
+async def create(request: schemas.Blog, user_id: str):
+    user = await models.User.get(user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    new_blog = models.Blog(title=request.title, body=request.body, creator=user)
+    await new_blog.insert()
     return new_blog
 
-# Delete a blog
-def destroy(id: int, db: Session):
-    blog = db.query(models.Blog).filter(models.Blog.id == id)
-    if not blog.first():
-     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, 
-                            detail = f"Blog with id {id} is not found")
-    blog.delete(synchronize_session=False)
-    db.commit()
+async def destroy(id: str):
+    blog = await models.Blog.get(id)
+    if not blog:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with id {id} is not found")
+    await blog.delete()
     return 'done'
 
-# Update a blog
-def update(id: int, request: schemas.Blog, db: Session):
-    blog = db.query(models.Blog).filter(models.Blog.id == id)
-    if not blog.first():
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
-                            detail = f"Blog with id {id} is not found")
-    blog.update({"title": request.title, "body": request.body})
-    db.commit()
+async def update(id: str, request: schemas.Blog):
+    blog = await models.Blog.get(id)
+    if not blog:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with id {id} is not found")
+    blog.title = request.title
+    blog.body = request.body
+    await blog.save()
     return 'updated'
 
-# Get a blog
-def show(id: int, response: Response, db: Session):
-    blog = db.query(models.Blog).options(joinedload(models.Blog.creator)).filter(models.Blog.id == id).first()
+async def show(id: str):
+    blog = await models.Blog.get(id)
     if not blog:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
-                            detail = f"Blog with id {id} is not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with id {id} is not found")
+    await blog.fetch_link(models.Blog.creator)
     return blog

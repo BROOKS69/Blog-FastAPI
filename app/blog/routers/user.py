@@ -1,24 +1,15 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Response
-from sqlalchemy.orm import Session
-from blog import schemas, models, database
-from passlib.context import CryptContext
-from blog.hashing import Hash
+from fastapi import APIRouter, status
+from blog import schemas
 from blog.repository import user
 
-# Initialize APIRouter
 router = APIRouter(
     prefix="/user",
 )
-get_db = database.get_db
-
-# Additional code for user creation with password hashing
-pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @router.post('/', response_model=schemas.ShowUser, tags=["USERS"])
-def create_user(request: schemas.User,db: Session = Depends(get_db)):
-    return user.create(request, db)
+async def create_user(request: schemas.User):
+    return await user.create(request)
 
-# Get a user
 @router.get('/{id}', response_model=schemas.ShowUser, tags=["USERS"])
-def get_user(id: int, db: Session = Depends(get_db)):
-   return user.show(id, db)                         
+async def get_user(id: str):
+   return await user.show(id)

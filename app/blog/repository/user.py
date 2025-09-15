@@ -1,22 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
-from sqlalchemy.orm import Session
-from blog import schemas, models, database
+from fastapi import HTTPException, status
+from blog import schemas, models
 from blog.hashing import Hash
 
-
-# Initialize password context for hashing
-def create(request: schemas.User, db: Session):
+async def create(request: schemas.User):
     hashed_password = Hash().bcrypt(request.password)
     new_user = models.User(name=request.name, email=request.email, password=hashed_password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    await new_user.insert()
     return new_user
-    
-# Get a user
-def show(id: int, db: Session):
-    user = db.query(models.User).filter(models.User.id == id).first()
+
+async def show(id: str):
+    user = await models.User.get(id)
     if not user:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, 
-                            detail = f"User with id {id} is not found")
-    return user         
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} is not found")
+    return user
