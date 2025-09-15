@@ -57,7 +57,7 @@ A robust, scalable RESTful API for managing users and blog posts, built with Fas
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/BROOKS69/Blog-FastAPI
    cd fastapi-blog-api
    ```
 
@@ -125,7 +125,7 @@ Railway provides free hosting for both your app and MongoDB database.
 - Once deployed, get the app URL from the service dashboard
 
 #### 6. Test Your API
-- Use the Railway app URL + your endpoints (e.g., `https://your-app.railway.app/docs` for docs)
+- Use the Railway app URL + your endpoints (e.g., `https://blog-fast-api.railway.app/docs` for docs)
 - Test user creation, login, and blog operations
 
 ### Option 2: Vercel + Railway MongoDB
@@ -161,10 +161,10 @@ To test locally with your Railway database:
 ## 📚 API Endpoints
 
 ### Authentication
+- `POST /register` - Create new user
 - `POST /login` - User login (returns JWT token)
 
 ### Users
-- `POST /user` - Create new user
 - `GET /user/{id}` - Get user by ID
 
 ### Blogs
