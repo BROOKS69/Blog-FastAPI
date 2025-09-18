@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
     logger.info("Database initialized.")
     yield
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(title="Blog-FastAPI", lifespan=lifespan)
 
 
 
@@ -28,7 +28,7 @@ logger.info("Routers included successfully.")
 
 @app.get('/' , tags=["ROOT"])
 async def root():
-    return {"message": "Welcome to the Blog API"}
+    return {"message": "Welcome to the Blog-FastAPI"}
 
 
 # if __name__ == "__main__":

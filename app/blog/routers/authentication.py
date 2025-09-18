@@ -11,7 +11,7 @@ async def register(request: schemas.User):
     existing_user = await models.User.find_one(models.User.email == request.email)
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
-    hashed_password = Hash.bcrypt(request.password)
+    hashed_password = Hash().bcrypt(request.password)
     new_user = models.User(name=request.name, email=request.email, password=hashed_password)
     await new_user.insert()
     return new_user
