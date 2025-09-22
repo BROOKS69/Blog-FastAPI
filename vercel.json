@@ -19,12 +19,6 @@
   "env": {
     "PYTHONPATH": "./app"
   },
-  "functions": {
-    "app/main.py": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  },
   "regions": ["iad1"],
   "outputDirectory": "."
 }
